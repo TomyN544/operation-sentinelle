@@ -1,0 +1,22 @@
+# Réveil du serveur : GitHub visite le site toutes les 10 minutes pour que
+# l'hébergeur gratuit (Render) ne le mette jamais en veille.
+# L'adresse du site est rangée dans la variable du dépôt SITE_URL
+# (Settings → Secrets and variables → Actions → Variables).
+name: Réveil du serveur
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  reveil:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Visiter le site
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$SITE_URL" ]; then echo "SITE_URL n'est pas encore défini"; exit 0; fi
+          curl -fsS -o /dev/null -w "Réponse %{http_code} en %{time_total} s\n" --max-time 120 "$SITE_URL" || echo "Le site n'a pas répondu"

@@ -1,0 +1,82 @@
+OPÉRATION SENTINELLE — mettre le jeu en ligne 24 h/24, gratuitement
+====================================================================
+
+Résultat : une adresse du type https://operation-sentinelle-xxxx.onrender.com
+que n'importe qui peut ouvrir dans son navigateur, sans compte, sans que ton PC
+soit allumé. Escouade, PvP, amis et classement fonctionnent.
+
+Il faut 3 comptes gratuits : GitHub, Upstash, Render. Les offres gratuites ne
+demandent normalement pas de carte bancaire ; si Render en demande une pour
+l'option « Blueprint », utilise plutôt « New + » → « Web Service » (voir tout en bas).
+Compte environ 15 minutes la première fois.
+
+
+ÉTAPE 1 — Mettre les fichiers sur GitHub
+----------------------------------------
+1. Crée un compte sur https://github.com
+2. En haut à droite : « + » → « New repository ».
+   Nom : operation-sentinelle   ·   coche « Public »   ·   « Create repository ».
+3. Sur la page qui s'affiche, clique sur « uploading an existing file ».
+4. Glisse TOUT le contenu de ce dossier (Operation-Sentinelle-EN-LIGNE) dans la page :
+   operation-sentinelle.html, package.json, render.yaml, le dossier « serveur »…
+5. En bas : « Commit changes ».
+
+
+ÉTAPE 2 — La sauvegarde du classement et des amis (Upstash)
+-----------------------------------------------------------
+Sans cette étape le jeu marche quand même, mais le classement, les amis et les
+réglages admin s'effacent à chaque mise en veille du serveur.
+1. Va sur https://upstash.com → « Sign up » (tu peux te connecter avec GitHub).
+2. « Create Database » → type Redis → nom : sentinelle → région la plus proche
+   (Europe) → offre « Free » → « Create ».
+3. Dans la page de la base, section « REST API », copie :
+     UPSTASH_REDIS_REST_URL    (une adresse en https://…upstash.io)
+     UPSTASH_REDIS_REST_TOKEN  (une longue suite de caractères)
+   Garde-les pour l'étape 3. Ne les donne à personne.
+
+
+ÉTAPE 3 — Lancer le serveur (Render)
+------------------------------------
+1. Va sur https://render.com → « Get Started » → connecte-toi avec GitHub.
+2. « New + » → « Blueprint » → choisis le dépôt operation-sentinelle.
+3. Render lit le fichier render.yaml et te demande 3 valeurs :
+     ADMIN_CODE                → invente ton code admin (lettres et chiffres,
+                                 ex : sentinelle2026). Garde-le secret.
+     UPSTASH_REDIS_REST_URL    → collé depuis l'étape 2
+     UPSTASH_REDIS_REST_TOKEN  → collé depuis l'étape 2
+4. « Apply ». Attends 2-3 minutes que le déploiement soit vert (« Live »).
+5. En haut de la page du service, l'adresse du jeu apparaît :
+   https://operation-sentinelle-xxxx.onrender.com  → c'est le lien à partager.
+
+
+DEVENIR ADMIN
+-------------
+Ouvre :  https://TON-ADRESSE.onrender.com/?admin=TON_CODE_ADMIN
+Tu as alors le panel admin (touche K en jeu). Dans le panel, « Ajouter un admin »
+donne le lien admin à envoyer à un ami de confiance, et « Nommer admin » marche
+pour un joueur connecté.
+Pour changer le code : Render → ton service → « Environment » → ADMIN_CODE.
+
+
+BON À SAVOIR (offre gratuite de Render)
+---------------------------------------
+- Mise en veille : après 15 minutes sans aucun joueur, le serveur s'endort.
+  La personne suivante attend environ 1 minute que la page s'ouvre, puis tout
+  redevient normal. Les données sont gardées grâce à Upstash.
+- Pour qu'il ne s'endorme jamais : crée un compte gratuit sur
+  https://cron-job.org et ajoute une tâche qui ouvre ton adresse toutes les
+  10 minutes. Les 750 heures gratuites par mois de Render suffisent pour un
+  serveur allumé en permanence.
+- Mettre à jour le jeu : remplace le fichier sur GitHub (ouvre-le → icône crayon,
+  ou « Add file » → « Upload files »). Render redéploie tout seul en 2-3 minutes.
+
+
+SI « BLUEPRINT » NE MARCHE PAS : CRÉER LE SERVICE À LA MAIN
+-----------------------------------------------------------
+Render → « New + » → « Web Service » → choisis le dépôt operation-sentinelle, puis :
+  Runtime / Language : Node
+  Build Command      : echo ok
+  Start Command      : node serveur/serveur.js
+  Instance Type      : Free
+Dans « Environment Variables », ajoute ADMIN_CODE, UPSTASH_REDIS_REST_URL et
+UPSTASH_REDIS_REST_TOKEN (mêmes valeurs qu'à l'étape 3), puis « Create Web Service ».

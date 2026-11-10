@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: operation-sentinelle
+    runtime: node
+    plan: free
+    buildCommand: echo "Aucune installation nécessaire"
+    startCommand: node serveur/serveur.js
+    healthCheckPath: /
+    envVars:
+      - key: ADMIN_CODE
+        sync: false
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false

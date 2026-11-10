@@ -1,0 +1,12 @@
+{
+  "name": "operation-sentinelle",
+  "version": "1.0.0",
+  "description": "Opération Sentinelle : jeu de tir rétro en 3D, campagne, zombies, escouade et PvP.",
+  "private": true,
+  "scripts": {
+    "start": "node serveur/serveur.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
